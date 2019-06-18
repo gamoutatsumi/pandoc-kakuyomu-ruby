@@ -32,7 +32,7 @@ e.g. :
 header-includes: # pxrubricaの読み込み、自動切替熟語ルビ(進入大)に設定
   - \usepackage{pxrubrica}
   - \rubysetup{<J>}
-  ---
+---
 
 ## 熟語ルビ
 
