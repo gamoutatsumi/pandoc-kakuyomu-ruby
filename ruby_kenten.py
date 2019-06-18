@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from pandocfilters import toJSONFilter, Str, RawInline
-import re
 import regex
 
 def ruby(key, val, fmt, meta):
@@ -9,10 +8,10 @@ def ruby(key, val, fmt, meta):
         if regex.search(r'(｜((?!《)(\p{Hiragana}|\p{Katakana}|\p{Han}|ー)+?))|(\p{Han}+?)《', val):
             for matchedVals in regex.findall(r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー)+?)|(?:\p{Han}+?))《.*?》', val):
                 base = regex.search(r'(((?<=｜)(.*?)(?=《))|(\p{Han}*?(?=《)))', matchedVals).groups(1)[0]
-                ruby = re.search(r'((?<=《)(.*?)(?=》))', matchedVals).groups(1)[1]
-                if re.search(r'.*?｜(?!.*《)(?!.*｜)', ruby):
-                    filteredRuby = re.search(r'^((.*?)(?=｜))', ruby)[0]
-                    for groupedRuby in re.findall(r'(((?<=｜)(.*?)(?=｜))|((?<=｜)(.*)(?=$)))', ruby):
+                ruby = regex.search(r'((?<=《)(.*?)(?=》))', matchedVals).groups(1)[1]
+                if regex.search(r'.*?｜(?!.*《)(?!.*｜)', ruby):
+                    filteredRuby = regex.search(r'^((.*?)(?=｜))', ruby)[0]
+                    for groupedRuby in regex.findall(r'(((?<=｜)(.*?)(?=｜))|((?<=｜)(.*)(?=$)))', ruby):
                         if fmt == 'latex':
                             filteredRuby = r'%s|%s' % (filteredRuby,groupedRuby[0])
                         else:
@@ -22,10 +21,10 @@ def ruby(key, val, fmt, meta):
                     filteredStr = r'\\ruby{%s}{%s}' % (base,ruby)
                 if fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
                     filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,ruby)
-                val = re.sub(r'%s' % matchedVals, r'%s' % filteredStr, val)
-        if re.search(r'《《', val):
-            for matchedVals in re.findall(r'《《.*?》》', val):
-                base = re.search(r'《《(.+?)》》', matchedVals).groups(0)[0]
+                val = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, val)
+        if regex.search(r'《《', val):
+            for matchedVals in regex.findall(r'《《.*?》》', val):
+                base = regex.search(r'《《(.+?)》》', matchedVals).groups(0)[0]
                 if fmt == 'latex':
                     filteredStr = r'\\kenten{%s}' % (base)
                 elif fmt == 'html' or 'html5':
@@ -33,7 +32,7 @@ def ruby(key, val, fmt, meta):
                     for kentenCount in base:
                         kenten += r'・'
                     filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,kenten)
-                val = re.sub(r'%s' % matchedVals, r'%s' % filteredStr, val)
+                val = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, val)
         if fmt == 'latex':
             return RawInline('tex', r'%s' %val)
         elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
