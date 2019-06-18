@@ -23,7 +23,7 @@ def ruby(key, val, fmt, meta):
                     filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,ruby)
                 val = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, val)
         if regex.search(r'《《', val):
-            for matchedVals in regex.findall(r'《《.*?》》', val):
+            for matchedVals in regex.findall(r'《《(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー)+?》》', val):
                 base = regex.search(r'《《(.+?)》》', matchedVals).groups(0)[0]
                 if fmt == 'latex':
                     filteredStr = r'\\kenten{%s}' % (base)
