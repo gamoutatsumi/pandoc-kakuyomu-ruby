@@ -62,3 +62,5 @@ header-includes: # pxrubricaの読み込み、自動切替熟語ルビ(進入大
 ## 使用可能フォーマット
 
 htmlベース(`html` `html5` `epub` `epub3`)、LaTeX(`latex`)に対応します。
+
+その他細かい説明は[qiita](https://qiita.com/Gamou-T/items/efca3fe46ade9779f64b)を参照してください。
