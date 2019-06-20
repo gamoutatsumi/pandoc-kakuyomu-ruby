@@ -27,7 +27,7 @@ def ruby(key, val, fmt, meta):
                 base = regex.search(r'《《(.+?)》》', matchedVals).groups(0)[0]
                 if fmt == 'latex':
                     filteredStr = r'\\kenten{%s}' % (base)
-                elif fmt == 'html' or 'html5':
+                elif fmt == 'html' or 'html5' or fmt == 'epub' or fmt == 'epub3':
                     kenten = ''
                     for kentenCount in base:
                         kenten += r'・'
