@@ -14,12 +14,12 @@ def ruby(key, val, fmt, meta):
                     for groupedRuby in regex.findall(r'(((?<=｜)(.*?)(?=｜))|((?<=｜)(.*)(?=$)))', ruby):
                         if fmt == 'latex':
                             filteredRuby = r'%s|%s' % (filteredRuby,groupedRuby[0])
-                        else:
+                        elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
                             filteredRuby = r'%s%s' % (filteredRuby,groupedRuby[0])
                     ruby = filteredRuby
                 if fmt == 'latex':
                     filteredStr = r'\\ruby{%s}{%s}' % (base,ruby)
-                if fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
+                elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
                     filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,ruby)
                 val = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, val)
         if regex.search(r'《《', val):
