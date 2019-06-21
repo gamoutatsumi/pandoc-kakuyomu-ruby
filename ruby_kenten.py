@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 
-from pandocfilters import toJSONFilter, Str, RawInline
+from pandocfilters import toJSONFilter, Str, RawInline, RawBlock
 import regex
 
 def ruby(key, val, fmt, meta):
+    if key == 'Header' and fmt == 'latex':
+        headerLevel = val[0]
+        val = val[1][0]
+        val = r'\section{%s}' %val
+        for i in range(headerLevel - 1):
+            val = regex.sub(r'^.', r'\sub', val)
+        return RawBlock('tex', val)
     if key != 'Str':
         return
-
     for matchedVals in regex.findall(r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー)+?)|(?:\p{Han}+?))《.*?》', val):
         base = regex.search(r'(((?<=｜)(.*?)(?=《))|(\p{Han}*?(?=《)))', matchedVals).groups(1)[0]
         ruby = regex.search(r'((?<=《)(.*?)(?=》))', matchedVals).groups(1)[1]
