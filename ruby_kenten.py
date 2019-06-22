@@ -37,12 +37,11 @@ def ruby(key, val, fmt, meta):
                 kenten += r'・'
             filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,kenten)
         filteredVal = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, filteredVal)
-        mathced = True
+        matched = True
 
     if regex.search(r'｜《', filteredVal):
         filteredVal = regex.sub(r'｜《', r'《', filteredVal)
-        if matched is False:
-            matched = True
+        matched = True
 
     if matched is True:
         if fmt == 'latex':
