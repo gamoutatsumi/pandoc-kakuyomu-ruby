@@ -10,8 +10,7 @@ def ruby(key, val, fmt, meta):
     if key != 'Str':
         return
     filteredVal = val
-    matched = False
-    for matchedVals in regex.findall(r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー)+?)|(?:\p{Han}+?))《.*?》', filteredVal):
+    for matchedVals in regex.findall(r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P})+?)|(?:\p{Han}+?))《.*?》', filteredVal):
         base = regex.search(r'(((?<=｜)(.*?)(?=《))|(\p{Han}*?(?=《)))', matchedVals).groups(1)[0]
         ruby = regex.search(r'((?<=《)(.*?)(?=》))', matchedVals).groups(1)[1]
         filteredRuby = regex.search(r'^((.*?)(?=｜))', ruby)[0] if regex.search(r'(.*)?｜(?!.*《)(?!.*｜)', ruby) else ruby
@@ -26,7 +25,6 @@ def ruby(key, val, fmt, meta):
         elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
             filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,ruby)
         filteredVal = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, filteredVal)
-        matched = True
     for matchedVals in regex.findall(r'《《(?:\p{Hiragana}|\p{Katakana}|\p{Han}|\p{P}|ー)+?》》', filteredVal):
         base = regex.search(r'《《(.+?)》》', matchedVals).groups(0)[0]
         if fmt == 'latex':
@@ -37,19 +35,16 @@ def ruby(key, val, fmt, meta):
                 kenten += r'・'
             filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,kenten)
         filteredVal = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, filteredVal)
-        matched = True
+    
+    filteredVal = regex.sub(r'｜《', r'《', filteredVal)
 
-    if regex.search(r'｜《', filteredVal):
-        filteredVal = regex.sub(r'｜《', r'《', filteredVal)
-        matched = True
-
-    if matched is True:
+    if 'matchedVals' in locals():
         if fmt == 'latex':
             return RawInline('latex',r'%s' %filteredVal)
         elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
             return RawInline('html', r'%s' %filteredVal)
     else:
-        return
+        return Str(filteredVal)
     
 
 
