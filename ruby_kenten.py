@@ -10,42 +10,46 @@ def ruby(key, val, fmt, meta):
         return Header(val[0], val[1], val[2])
     if key != 'Str':
         return
-    filteredVal = val
-    for matchedVals in regex.findall(r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P})+?)|(?:\p{Han}+?))《.*?》', filteredVal):
-        base = regex.search(r'(((?<=｜)(.*?)(?=《))|(\p{Han}*?(?=《)))', matchedVals).groups(1)[0]
-        ruby = regex.search(r'((?<=《)(.*?)(?=》))', matchedVals).groups(1)[1]
-        filteredRuby = regex.search(r'^((.*?)(?=｜))', ruby)[0] if regex.search(r'(.*)?｜(?!.*《)(?!.*｜)', ruby) else ruby
-        for groupedRuby in regex.findall(r'(((?<=｜)(.*?)(?=｜))|((?<=｜)(.*)(?=$)))', ruby):
+    filtered_val = val
+    for matched_vals in regex.findall(r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P})+?)|(?:\p{Han}+?))《.*?》', filtered_val):
+        base = regex.search(r'(((?<=｜)(.*?)(?=《))|(\p{Han}*?(?=《)))', matched_vals).groups(1)[0]
+        ruby = regex.search(r'((?<=《)(.*?)(?=》))', matched_vals).groups(1)[1]
+        filtered_ruby = regex.search(r'^((.*?)(?=｜))', ruby)[0] if regex.search(r'(.*)?｜(?!.*《)(?!.*｜)', ruby) else ruby
+        for grouped_ruby in regex.findall(r'(((?<=｜)(.*?)(?=｜))|((?<=｜)(.*)(?=$)))', ruby):
             if fmt == 'latex':
-                filteredRuby = r'%s|%s' % (filteredRuby,groupedRuby[0])
+                filtered_ruby = r'%s|%s' % (filtered_ruby,grouped_ruby[0])
             elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
-                filteredRuby = r'%s%s' % (filteredRuby,groupedRuby[0])
-        ruby = filteredRuby
+                filtered_ruby = r'%s%s' % (filtered_ruby,grouped_ruby[0])
+        ruby = filtered_ruby
         if fmt == 'latex':
-            filteredStr = r'\\ruby{%s}{%s}' % (base,ruby)
+            filtered_str = r'\\ruby{%s}{%s}' % (base,ruby)
         elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
-            filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,ruby)
-        filteredVal = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, filteredVal)
-    for matchedVals in regex.findall(r'《《(?:\p{Hiragana}|\p{Katakana}|\p{Han}|\p{P}|ー)+?》》', filteredVal):
-        base = regex.search(r'《《(.+?)》》', matchedVals).groups(0)[0]
+            filtered_str = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,ruby)
+        filtered_val = regex.sub(r'%s' % matched_vals, r'%s' % filtered_str, filtered_val)
+    for matched_vals in regex.findall(r'《《(?:\p{Hiragana}|\p{Katakana}|\p{Han}|\p{P}|ー)+?》》', filtered_val):
+        base = regex.search(r'《《(.+?)》》', matched_vals).groups(0)[0]
         if fmt == 'latex':
-            filteredStr = r'\\kenten{%s}' % base
+            filtered_str = r'\\kenten{%s}' % base
         elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
             kenten = ''
-            for kentenCount in base:
+            for kenten_count in base:
                 kenten += r'・'
-            filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,kenten)
-        filteredVal = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, filteredVal)
+            filtered_str = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,kenten)
+        filtered_val = regex.sub(r'%s' % matched_vals, r'%s' % filtered_str, filtered_val)
     
-    filteredVal = regex.sub(r'｜《', r'《', filteredVal)
+    if fmt == 'latex':
+        for matched_vals in regex.findall(r'…', filtered_val):
+            filtered_val = regex.sub(r'%s' % matched_vals, r'…', filtered_val)
+            
+    filtered_val = regex.sub(r'｜《', r'《', filtered_val)
 
     if 'matchedVals' in locals():
         if fmt == 'latex':
-            return RawInline('latex',r'%s' %filteredVal)
+            return RawInline('latex',r'%s' %filtered_val)
         elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
-            return RawInline('html', r'%s' %filteredVal)
+            return RawInline('html', r'%s' %filtered_val)
     else:
-        return Str(filteredVal)
+        return Str(filtered_val)
     
 
 
