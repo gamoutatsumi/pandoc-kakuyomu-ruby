@@ -43,7 +43,7 @@ def ruby(key, val, fmt, meta):
             
     filtered_val = regex.sub(r'｜《', r'《', filtered_val)
 
-    if 'matchedVals' in locals():
+    if 'matched_vals' in locals():
         if fmt == 'latex':
             return RawInline('latex',r'%s' %filtered_val)
         elif fmt == 'html' or fmt == 'html5' or fmt == 'epub' or fmt == 'epub3':
