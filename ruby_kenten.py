@@ -40,6 +40,8 @@ def ruby(key, val, fmt, meta):
     if fmt == 'latex':
         for matched_vals in regex.findall(r'…', filtered_val):
             filtered_val = regex.sub(r'%s' % matched_vals, r'…', filtered_val)
+        for matched_vals in regex.findall(r'―', filtered_val):
+            filtered_val = regex.sub(r'%s' % matched_vals, r'—', filtered_val)
             
     filtered_val = regex.sub(r'｜《', r'《', filtered_val)
 
