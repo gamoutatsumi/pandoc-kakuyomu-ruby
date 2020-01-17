@@ -5,13 +5,15 @@ from pandocfilters import toJSONFilter, Str, RawInline, Header
 import regex
 
 def ruby_kenten(key, val, fmt, meta):
+    ruby_pattern = r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P})+?)|(?:\p{Han}+?))《.*?》'
+    kenten_pattern = r'《《(?:\p{Hiragana}|\p{Katakana}|\p{Han}|\p{P}|ー)+?》》'
     if key == 'Header':
         val[1][0] = val[2][0]['c']
         return Header(val[0], val[1], val[2])
     if key != 'Str':
         return
     filtered_val = val
-    for matched_vals in regex.findall(r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P})+?)|(?:\p{Han}+?))《.*?》', filtered_val):
+    for matched_vals in regex.findall(ruby_pattern, filtered_val):
         base = regex.search(r'(((?<=｜)(.*?)(?=《))|(\p{Han}*?(?=《)))', matched_vals).groups(1)[0]
         ruby = regex.search(r'((?<=《)(.*?)(?=》))', matched_vals).groups(1)[1]
         filtered_ruby = regex.search(r'^((.*?)(?=｜))', ruby)[0] if regex.search(r'(.*)?｜(?!.*《)(?!.*｜)', ruby) else ruby
@@ -24,9 +26,11 @@ def ruby_kenten(key, val, fmt, meta):
         if fmt == 'latex':
             filtered_str = r'\\ruby{%s}{%s}' % (base, ruby)
         elif fmt in ('html', 'html5', 'epub', 'epub3'):
-            filtered_str = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base, ruby)
+            filtered_str = (r'<ruby><rb>%s</rb><rp>'
+                            '《</rp><rt>%s</rt><rp>》'
+                            '</rp></ruby>') % (base, ruby)
         filtered_val = regex.sub(r'%s' % matched_vals, r'%s' % filtered_str, filtered_val)
-    for matched_vals in regex.findall(r'《《(?:\p{Hiragana}|\p{Katakana}|\p{Han}|\p{P}|ー)+?》》', filtered_val):
+    for matched_vals in regex.findall(kenten_pattern, filtered_val):
         base = regex.search(r'《《(.+?)》》', matched_vals).groups(0)[0]
         if fmt == 'latex':
             filtered_str = r'\\kenten{%s}' % base
@@ -34,7 +38,9 @@ def ruby_kenten(key, val, fmt, meta):
             kenten = ''
             for kenten_count in base:
                 kenten += r'・'
-            filtered_str = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base, kenten)
+            filtered_str = (r'<ruby><rb>%s</rb><rp>'
+                            '《</rp><rt>%s</rt><rp>》'
+                            '</rp></ruby>') % (base, kenten)
         filtered_val = regex.sub(r'%s' % matched_vals, r'%s' % filtered_str, filtered_val)
 
     if fmt == 'latex':
