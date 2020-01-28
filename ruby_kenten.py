@@ -37,6 +37,10 @@ def ruby(key, val, fmt, meta):
             filteredStr = r'<ruby><rb>%s</rb><rp>《</rp><rt>%s</rt><rp>》</rp></ruby>' % (base,kenten)
         filteredVal = regex.sub(r'%s' % matchedVals, r'%s' % filteredStr, filteredVal)
     
+    if fmt == 'latex':
+        for matchedVals in regex.findall(r'…', filteredVal):
+            filteredVal = regex.sub(r'%s' % matchedVals, r'…', filteredVal)
+
     filteredVal = regex.sub(r'｜《', r'《', filteredVal)
 
     if 'matchedVals' in locals():
