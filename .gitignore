@@ -140,10 +140,5 @@ dmypy.json
 ### https://raw.github.com/github/gitignore/2644536a24f37d3906c7ea56e57f6965b1e21f36/Global/VisualStudioCode.gitignore
 
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 *.code-workspace
-
 
