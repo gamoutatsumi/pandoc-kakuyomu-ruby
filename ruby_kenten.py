@@ -5,7 +5,7 @@ from pandocfilters import toJSONFilter, Str, RawInline, Header
 import regex
 
 def ruby_kenten(key, val, fmt, meta):
-    ruby_pattern = r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P})+?)|(?:\p{Han}+?))《(?!.*《).*?》'
+    ruby_pattern = r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P}|█)+?)|(?:\p{Han}+?))《(?!.*《).*?》'
     kenten_pattern = r'《《(?:\p{Hiragana}|\p{Katakana}|\p{Han}|\p{P}|ー)+?》》'
     if key == 'Header':
         val[1][0] = val[2][0]['c']
