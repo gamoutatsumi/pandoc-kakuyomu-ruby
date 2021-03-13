@@ -5,7 +5,7 @@ from pandocfilters import toJSONFilter, Str, RawInline, Header
 import regex
 
 def ruby_kenten(key, val, fmt, meta):
-    ruby_pattern = r'(?:(?:｜(?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P}|█)+?)|(?:\p{Han}+?))《(?!.*《).*?》'
+    ruby_pattern = r'(?:(?:[\|｜](?:\p{Hiragana}|\p{Katakana}|\p{Han}|ー|\p{P}|█)+?)|(?:\p{Han}+?))《(?!.*《).*?》'
     kenten_pattern = r'《《(?:\p{Hiragana}|\p{Katakana}|\p{Han}|\p{P}|ー)+?》》'
     if key == 'Header':
         val[1][0] = val[2][0]['c']
@@ -14,10 +14,10 @@ def ruby_kenten(key, val, fmt, meta):
         return
     filtered_val = val
     for matched_vals in regex.findall(ruby_pattern, filtered_val):
-        base = regex.search(r'(((?<=｜)(.*?)(?=《))|(\p{Han}*?(?=《)))', matched_vals).groups(1)[0]
+        base = regex.search(r'(((?<=[\|｜])(.*?)(?=《))|(\p{Han}*?(?=《)))', matched_vals).groups(1)[0]
         ruby = regex.search(r'((?<=《)(.*?)(?=》))', matched_vals).groups(1)[1]
-        filtered_ruby = regex.search(r'^((.*?)(?=｜))', ruby)[0] if regex.search(r'(.*)?｜(?!.*《)(?!.*｜)', ruby) else ruby
-        for grouped_ruby in regex.findall(r'(((?<=｜)(.*?)(?=｜))|((?<=｜)(.*)(?=$)))', ruby):
+        filtered_ruby = regex.search(r'^((.*?)(?=[\|｜]))', ruby)[0] if regex.search(r'(.*)?[\|｜](?!.*《)(?!.*[\|｜])', ruby) else ruby
+        for grouped_ruby in regex.findall(r'(((?<=[\|｜])(.*?)(?=[\|｜]))|((?<=[\|｜])(.*)(?=$)))', ruby):
             if fmt == 'latex':
                 filtered_ruby = r'%s|%s' % (filtered_ruby, grouped_ruby[0])
             elif fmt in ('html', 'html5', 'epub', 'epub3'):
@@ -49,7 +49,7 @@ def ruby_kenten(key, val, fmt, meta):
         for matched_vals in regex.findall(r'―', filtered_val):
             filtered_val = regex.sub(r'%s' % matched_vals, r'—', filtered_val)
 
-    filtered_val = regex.sub(r'｜《', r'《', filtered_val)
+    filtered_val = regex.sub(r'[\|｜]《', r'《', filtered_val)
 
     if 'matched_vals' in locals():
         if fmt == 'latex':
